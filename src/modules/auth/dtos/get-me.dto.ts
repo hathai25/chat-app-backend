@@ -1,15 +1,15 @@
-import { Expose } from 'class-transformer';
+import { Expose } from "class-transformer";
 
 export class GetMeDto {
-    @Expose()
-    userId: number;
+  @Expose()
+  userId: number;
 
-    @Expose()
-    email: string;
+  @Expose()
+  email: string;
 
-    @Expose()
-    username: string;
+  @Expose()
+  username: string;
 
-    @Expose()
-    avatar: string;
+  @Expose()
+  avatar: string;
 }

@@ -1,32 +1,41 @@
-import { IsDate, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, MinLength } from "class-validator";
+import {
+  IsDate,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MinLength,
+} from "class-validator";
 import { GenderType } from "../../users/enums";
 
 export class CreateUserDto {
-    @IsEmail()
-    email: string;
+  @IsEmail()
+  email: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(8)
-    password: string;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
+  password: string;
 
-    @IsString()
-    @IsNotEmpty()
-    username: string;
+  @IsString()
+  @IsNotEmpty()
+  username: string;
 
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsOptional()
-    @IsUrl()
-    avatar: string;
+  @IsOptional()
+  @IsUrl()
+  avatar: string;
 
-    @IsDate()
-    @IsNotEmpty()
-    dob: Date;
+  @IsDate()
+  @IsNotEmpty()
+  dob: Date;
 
-    @IsEnum(GenderType)
-    @IsNotEmpty()
-    gender: GenderType;
-};
+  @IsEnum(GenderType)
+  @IsNotEmpty()
+  gender: GenderType;
+}
