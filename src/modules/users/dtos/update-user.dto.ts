@@ -1,6 +1,6 @@
 import { IsDate, IsEnum, IsOptional, IsString, IsUrl } from "class-validator";
-import { GenderType } from "../enums";
 import { ApiProperty } from "@nestjs/swagger";
+import { Gender } from "@prisma/client";
 
 export class UpdateUserDto {
   @IsOptional()
@@ -19,7 +19,7 @@ export class UpdateUserDto {
   dob: Date;
 
   @IsOptional()
-  @IsEnum(GenderType)
+  @IsEnum(Gender)
   @ApiProperty()
-  gender: GenderType;
+  gender: Gender;
 }

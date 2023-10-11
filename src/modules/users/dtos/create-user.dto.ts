@@ -8,8 +8,8 @@ import {
   IsUrl,
   MinLength,
 } from "class-validator";
-import { GenderType } from "../enums";
 import { ApiProperty } from "@nestjs/swagger";
+import { Gender } from "@prisma/client";
 
 export class CreateUserDto {
   @IsEmail()
@@ -41,8 +41,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   dob: Date;
 
-  @IsEnum(GenderType)
+  @IsEnum(Gender)
   @IsNotEmpty()
   @ApiProperty()
-  gender: GenderType;
+  gender: Gender;
 }

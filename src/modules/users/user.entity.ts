@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "@prisma/client";
+import { Gender, User } from "@prisma/client";
 
 export class UserEntity implements User {
   @ApiProperty()
@@ -24,5 +24,5 @@ export class UserEntity implements User {
   dob: Date;
 
   @ApiProperty()
-  gender: string;
+  gender: Gender;
 }

@@ -1,8 +1,10 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
-import { UpdateUserDto, CreateUserDto } from "./dtos";
+import { UpdateUserDto, CreateUserDto, UserFilterDto } from "./dtos";
 import { brcyptHelper } from "src/utils/bcrypt";
 import { UserEntity } from "./user.entity";
+import { ISuccessListRespone } from "src/common/respone/interface";
+import { arrDataToRespone } from "src/common/respone/util";
 
 @Injectable()
 export class UserService {
@@ -59,5 +61,33 @@ export class UserService {
     return this.prisma.user.delete({
       where: { id },
     });
+  }
+
+  async countUsers(filter: UserFilterDto): Promise<number> {
+    return this.prisma.user.count({
+      where: {
+        ...filter.options,
+      },
+    });
+  }
+
+  async getAllUsers(): Promise<UserEntity[]> {
+    return this.prisma.user.findMany();
+  }
+
+  async getUsers(
+    filter: UserFilterDto
+  ): Promise<ISuccessListRespone<UserEntity>> {
+    const total = await this.countUsers(filter);
+    const users = await this.prisma.user.findMany({
+      where: {
+        email: {
+          contains: filter.email,
+        },
+      },
+      skip: filter.skip,
+      take: filter.pagesize,
+    });
+    return arrDataToRespone(UserEntity)(users, total);
   }
 }

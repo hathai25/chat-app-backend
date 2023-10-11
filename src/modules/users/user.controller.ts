@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CreateUserDto, UpdateUserDto } from "./dtos";
+import { CreateUserDto, UpdateUserDto, UserFilterDto } from "./dtos";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { UserEntity } from "./user.entity";
@@ -43,5 +43,19 @@ export class UserController {
   @ApiOkResponse({ description: "Delete user", type: UserEntity })
   async remove(@Param("id") id: string) {
     return this.userService.deleteUser(id);
+  }
+
+  @Get("/all")
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ description: "Get all users" })
+  async findAll() {
+    return this.userService.getAllUsers();
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ description: "Get users with filter" })
+  async getUsers(@Body() filter: UserFilterDto) {
+    return this.userService.getUsers(filter);
   }
 }
