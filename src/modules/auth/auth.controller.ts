@@ -3,6 +3,10 @@ import { CreateUserDto, GetMeDto, LoginDto } from "./dtos";
 import { AuthService } from "./auth.service";
 import { UserEntity } from "../users/user.entity";
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
+import { ISuccessRespone } from "src/common/respone/interface";
+import { dataToRespone } from "src/common/respone/util";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -24,9 +28,9 @@ export class AuthController {
     return await this.authService.login(loginDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get("me")
-  @ApiOkResponse({ description: "Get me", type: GetMeDto })
-  async getMe(@Req() req): Promise<GetMeDto> {
-    return req.user;
+  async getMeUser(@Req() req: any): Promise<ISuccessRespone<GetMeDto>> {
+    return dataToRespone(GetMeDto)(req.user);
   }
 }

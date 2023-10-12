@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
-import { RelationShipDto, UpdateRelationshipDto } from "./dtos";
+import { FriendDto, RelationShipDto, UpdateRelationshipDto } from "./dtos";
+import { RelationshipEntity } from "./relationship.entity";
 
 @Injectable()
 export class RelationshipService {
@@ -10,8 +11,6 @@ export class RelationshipService {
     const userRelation = await this.prisma.relationship.findMany({
       where: { userID: data.userID, friendID: data.friendID },
     });
-
-    console.log(userRelation);
 
     if (userRelation.length) {
       throw new ForbiddenException("Already relation exists");
@@ -29,8 +28,16 @@ export class RelationshipService {
     return this.prisma.relationship.updateMany({
       data: { status: data.status },
       where: {
-        userID: data.userID,
-        friendID: data.friendID,
+        OR: [
+          {
+            userID: data.userID,
+            friendID: data.friendID,
+          },
+          {
+            userID: data.friendID,
+            friendID: data.userID,
+          },
+        ],
       },
     });
   }
@@ -44,10 +51,10 @@ export class RelationshipService {
     });
   }
 
-  async getFriends(userID: string) {
-    return this.prisma.relationship.findMany({
+  async getFriends(userID: string): Promise<FriendDto[]> {
+    const data = await this.prisma.relationship.findMany({
       where: {
-        userID,
+        userID: userID,
         status: "accepted",
       },
       select: {
@@ -61,6 +68,7 @@ export class RelationshipService {
         },
       },
     });
+    return data.map((item) => item.friend);
   }
 
   async getFriendRequests(userID: string) {

@@ -6,14 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { RelationshipService } from "./relationship.service";
 import { RelationshipEntity } from "./relationship.entity";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { RelationShipDto, UpdateRelationshipDto } from "./dtos";
-import { FriendFilterDto } from "./dtos/friend-filter.dto";
+import {
+  FriendDto,
+  FriendFilterDto,
+  RelationShipDto,
+  UpdateRelationshipDto,
+} from "./dtos";
+import { arrDataToRespone } from "src/common/respone/util";
 
 @ApiTags("relationship")
 @Controller("relationship")
@@ -46,9 +52,13 @@ export class RelationshipController {
 
   @Post("friends")
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ description: "Get friends", type: RelationshipEntity })
-  async getFriends(@Param() userID: string, @Body() data: FriendFilterDto) {
-    return this.relationshipService.getFriends(userID);
+  @ApiOkResponse({ description: "Get friends", type: FriendDto })
+  async getFriends(
+    @Query("userID") userID: string,
+    @Body() data: FriendFilterDto
+  ) {
+    const friends = await this.relationshipService.getFriends(userID);
+    return arrDataToRespone(FriendDto)(friends, friends.length);
   }
 
   @Get("requests")
