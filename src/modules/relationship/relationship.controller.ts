@@ -12,7 +12,8 @@ import { RelationshipService } from "./relationship.service";
 import { RelationshipEntity } from "./relationship.entity";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { RelationShipDto } from "./dtos";
+import { RelationShipDto, UpdateRelationshipDto } from "./dtos";
+import { FriendFilterDto } from "./dtos/friend-filter.dto";
 
 @ApiTags("relationship")
 @Controller("relationship")
@@ -32,7 +33,7 @@ export class RelationshipController {
   @Patch("update")
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: "Update user", type: RelationshipEntity })
-  async update(@Body() data: RelationshipEntity) {
+  async update(@Body() data: UpdateRelationshipDto) {
     return this.relationshipService.update(data);
   }
 
@@ -43,10 +44,10 @@ export class RelationshipController {
     return this.relationshipService.delete(data);
   }
 
-  @Get("friends")
+  @Post("friends")
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: "Get friends", type: RelationshipEntity })
-  async getFriends(@Param() userID: string) {
+  async getFriends(@Param() userID: string, @Body() data: FriendFilterDto) {
     return this.relationshipService.getFriends(userID);
   }
 

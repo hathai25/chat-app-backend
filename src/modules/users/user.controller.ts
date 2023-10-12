@@ -45,14 +45,14 @@ export class UserController {
     return this.userService.deleteUser(id);
   }
 
-  @Get("/all")
+  @Get("/list/all")
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: "Get all users" })
   async findAll() {
     return this.userService.getAllUsers();
   }
 
-  @Get()
+  @Post("/list")
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: "Get users with filter" })
   async getUsers(@Body() filter: UserFilterDto) {

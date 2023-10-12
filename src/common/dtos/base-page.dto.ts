@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 
 export enum SortType {
@@ -8,19 +9,23 @@ export enum SortType {
 export class BaseFilterDto {
   @IsOptional()
   @IsNumber()
-  readonly page: number;
+  @ApiPropertyOptional()
+  readonly page?: number;
 
   @IsOptional()
   @IsNumber()
-  readonly pagesize: number;
+  @ApiPropertyOptional()
+  readonly pagesize?: number;
 
   @IsOptional()
   @IsEnum(SortType)
-  readonly sort: SortType;
+  @ApiPropertyOptional()
+  readonly sort?: SortType;
 
   @IsOptional()
   @IsString()
-  readonly sortBy: string;
+  @ApiPropertyOptional()
+  readonly sortBy?: string;
 
   constructor(page = 1, pagesize = 10, sort = SortType.ASC, sortBy = "id") {
     this.page = page;
