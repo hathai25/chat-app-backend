@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
-import { UpdateUserDto, CreateUserDto, UserFilterDto } from "./dtos";
+import { UpdateUserDto, CreateUserDto, UserFilterDto, UserDto } from "./dtos";
 import { brcyptHelper } from "src/utils/bcrypt";
 import { UserEntity } from "./user.entity";
 import { ISuccessListRespone } from "src/common/respone/interface";
@@ -71,8 +71,24 @@ export class UserService {
     });
   }
 
-  async getAllUsers(): Promise<UserEntity[]> {
-    return this.prisma.user.findMany();
+  async getAllUsers(): Promise<ISuccessListRespone<UserDto>> {
+    const users = await this.prisma.user.findMany();
+    return arrDataToRespone(UserDto)(users, users.length);
+  }
+
+  async getNotFriendUsers(
+    userID: string
+  ): Promise<ISuccessListRespone<UserDto>> {
+    const users = await this.prisma.user.findMany({
+      where: {
+        FriendRelationship: {
+          none: {
+            userID: userID,
+          },
+        },
+      },
+    });
+    return arrDataToRespone(UserDto)(users, users.length);
   }
 
   async getUsers(

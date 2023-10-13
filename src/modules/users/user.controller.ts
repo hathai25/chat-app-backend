@@ -52,6 +52,13 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
+  @Get("/list-not-friends/all")
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ description: "Get all users" })
+  async findNotFriends(@Param("id") id: string) {
+    return this.userService.getNotFriendUsers(id);
+  }
+
   @Post("/list")
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: "Get users with filter" })

@@ -12,5 +12,8 @@ export class RelationshipEntity implements Relationship {
   friendID: string;
 
   @ApiProperty()
+  senderID: string;
+
+  @ApiProperty()
   status: RelationshipStatus;
 }

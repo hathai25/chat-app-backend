@@ -1,7 +1,14 @@
+import { arrDataToRespone } from "src/common/respone/util";
+import { Relationship } from "@prisma/client";
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
-import { FriendDto, RelationShipDto, UpdateRelationshipDto } from "./dtos";
-import { RelationshipEntity } from "./relationship.entity";
+import {
+  FriendDto,
+  RelationShipDto,
+  RequestDto,
+  UpdateRelationshipDto,
+} from "./dtos";
+import { ISuccessListRespone } from "src/common/respone/interface";
 
 @Injectable()
 export class RelationshipService {
@@ -18,8 +25,18 @@ export class RelationshipService {
 
     return this.prisma.relationship.createMany({
       data: [
-        { userID: data.userID, friendID: data.friendID, status: "pending" },
-        { userID: data.friendID, friendID: data.userID, status: "pending" },
+        {
+          senderID: data.userID,
+          userID: data.userID,
+          friendID: data.friendID,
+          status: "pending",
+        },
+        {
+          senderID: data.userID,
+          userID: data.friendID,
+          friendID: data.userID,
+          status: "pending",
+        },
       ],
     });
   }
@@ -71,11 +88,16 @@ export class RelationshipService {
     return data.map((item) => item.friend);
   }
 
-  async getFriendRequests(userID: string) {
-    return this.prisma.relationship.findMany({
+  async getPendingRequests(
+    userID: string
+  ): Promise<ISuccessListRespone<RequestDto>> {
+    const data = await this.prisma.relationship.findMany({
       where: {
         friendID: userID,
         status: "pending",
+        senderID: {
+          not: userID,
+        },
       },
       select: {
         user: {
@@ -86,7 +108,54 @@ export class RelationshipService {
             avatar: true,
           },
         },
+        status: true,
+        id: true,
       },
     });
+
+    const result = data.map((item) => {
+      return {
+        id: item.id,
+        status: item.status,
+        ...item.user,
+        userID: item.user.id,
+      };
+    });
+
+    return arrDataToRespone(RequestDto)(result, result.length);
+  }
+
+  async getSentRequests(
+    userID: string
+  ): Promise<ISuccessListRespone<RequestDto>> {
+    const data = await this.prisma.relationship.findMany({
+      where: {
+        senderID: userID,
+        status: "pending",
+      },
+      select: {
+        friend: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+          },
+        },
+        status: true,
+        id: true,
+      },
+    });
+
+    const result = data.map((item) => {
+      return {
+        id: item.id,
+        status: item.status,
+        ...item.friend,
+        userID: item.friend.id,
+      };
+    });
+
+    return arrDataToRespone(RequestDto)(result, result.length);
   }
 }

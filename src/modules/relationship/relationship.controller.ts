@@ -17,6 +17,7 @@ import {
   FriendDto,
   FriendFilterDto,
   RelationShipDto,
+  RequestDto,
   UpdateRelationshipDto,
 } from "./dtos";
 import { arrDataToRespone } from "src/common/respone/util";
@@ -61,13 +62,23 @@ export class RelationshipController {
     return arrDataToRespone(FriendDto)(friends, friends.length);
   }
 
-  @Get("requests")
+  @Get("pending/list")
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
-    description: "Get friends pending",
-    type: RelationshipEntity,
+    description: "Get list pending friend request",
+    type: RequestDto,
   })
-  async getFriendsPending(@Param() userID: string) {
-    return this.relationshipService.getFriendRequests(userID);
+  async getPendingRequests(@Query("userID") userID: string) {
+    return this.relationshipService.getPendingRequests(userID);
+  }
+
+  @Get("sent/list")
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "Get list sent friend request",
+    type: RequestDto,
+  })
+  async getSentRequests(@Query("userID") userID: string) {
+    return this.relationshipService.getSentRequests(userID);
   }
 }

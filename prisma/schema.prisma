@@ -27,6 +27,7 @@ model User {
   gender             Gender?
   UserRelationship   Relationship[] @relation("user")
   FriendRelationship Relationship[] @relation("friend")
+  SenderRelationship Relationship[] @relation("sender")
 }
 
 enum RelationshipStatus {
@@ -37,6 +38,8 @@ enum RelationshipStatus {
 
 model Relationship {
   id       String             @id @default(auto()) @map("_id") @db.ObjectId
+  senderID String             @db.ObjectId
+  sender   User               @relation("sender", fields: [senderID], references: [id])
   userID   String             @db.ObjectId
   user     User               @relation("user", fields: [userID], references: [id])
   friendID String             @db.ObjectId
