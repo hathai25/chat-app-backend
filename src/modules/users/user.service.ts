@@ -1,3 +1,4 @@
+import { RelationshipService } from "./../relationship/relationship.service";
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 import { UpdateUserDto, CreateUserDto, UserFilterDto, UserDto } from "./dtos";
@@ -8,7 +9,10 @@ import { arrDataToRespone } from "src/common/respone/util";
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private relationshipService: RelationshipService
+  ) {}
 
   async validateUser(
     email: string,
@@ -79,12 +83,11 @@ export class UserService {
   async getNotFriendUsers(
     userID: string
   ): Promise<ISuccessListRespone<UserDto>> {
+    const friendID = await this.relationshipService.getFriendIDs(userID);
     const users = await this.prisma.user.findMany({
       where: {
-        FriendRelationship: {
-          none: {
-            userID: userID,
-          },
+        id: {
+          notIn: [...friendID, userID],
         },
       },
     });

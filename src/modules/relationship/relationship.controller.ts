@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
-  Param,
   Patch,
   Post,
   Query,
@@ -17,7 +15,6 @@ import {
   FriendDto,
   FriendFilterDto,
   RelationShipDto,
-  RequestDto,
   UpdateRelationshipDto,
 } from "./dtos";
 import { arrDataToRespone } from "src/common/respone/util";
@@ -60,25 +57,5 @@ export class RelationshipController {
   ) {
     const friends = await this.relationshipService.getFriends(userID);
     return arrDataToRespone(FriendDto)(friends, friends.length);
-  }
-
-  @Get("pending/list")
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({
-    description: "Get list pending friend request",
-    type: RequestDto,
-  })
-  async getPendingRequests(@Query("userID") userID: string) {
-    return this.relationshipService.getPendingRequests(userID);
-  }
-
-  @Get("sent/list")
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({
-    description: "Get list sent friend request",
-    type: RequestDto,
-  })
-  async getSentRequests(@Query("userID") userID: string) {
-    return this.relationshipService.getSentRequests(userID);
   }
 }

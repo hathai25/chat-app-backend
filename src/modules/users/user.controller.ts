@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
@@ -55,7 +56,7 @@ export class UserController {
   @Get("/list-not-friends/all")
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: "Get all users" })
-  async findNotFriends(@Param("id") id: string) {
+  async findNotFriends(@Query("userID") id: string) {
     return this.userService.getNotFriendUsers(id);
   }
 
