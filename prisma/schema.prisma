@@ -32,7 +32,7 @@ model User {
   ConversationCreator Conversation[] @relation("creator")
   Participant         Participant[]  @relation("participant")
   Message             Message[]      @relation("owner")
-  Nicknames           Nicknames[]    @relation("user-nickname")
+  Nickname            Nickname[]     @relation("user-nickname")
 }
 
 enum RelationshipStatus {
@@ -80,7 +80,7 @@ model Conversation {
   creator     User?            @relation("creator", fields: [creatorID], references: [id])
   Participant Participant[]    @relation("conversation")
   Message     Message[]        @relation("conversation")
-  Nicknames   Nicknames[]      @relation("conversation-nickname")
+  Nicknames   Nickname[]       @relation("conversation-nickname")
 }
 
 model Participant {
@@ -119,7 +119,7 @@ model MessageStatus {
   updatedAt DateTime          @updatedAt
 }
 
-model Nicknames {
+model Nickname {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
   userID         String       @db.ObjectId
   user           User         @relation("user-nickname", fields: [userID], references: [id])
