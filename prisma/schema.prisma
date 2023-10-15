@@ -17,18 +17,22 @@ enum Gender {
 }
 
 model User {
-  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
-  email              String         @unique
-  username           String
-  password           String
-  name               String
-  avatar             String?
-  dob                DateTime?
-  gender             Gender?
-  UserRelationship   Relationship[] @relation("user")
-  FriendRelationship Relationship[] @relation("friend")
-  SendRequest        Request[]      @relation("sender")
-  ReceiveRequest     Request[]      @relation("receiver")
+  id                  String         @id @default(auto()) @map("_id") @db.ObjectId
+  email               String         @unique
+  username            String
+  password            String
+  name                String
+  avatar              String?
+  dob                 DateTime?
+  gender              Gender?
+  UserRelationship    Relationship[] @relation("user")
+  FriendRelationship  Relationship[] @relation("friend")
+  SendRequest         Request[]      @relation("sender")
+  ReceiveRequest      Request[]      @relation("receiver")
+  ConversationCreator Conversation[] @relation("creator")
+  Participant         Participant[]  @relation("participant")
+  Message             Message[]      @relation("owner")
+  Nicknames           Nicknames[]    @relation("user-nickname")
 }
 
 enum RelationshipStatus {
@@ -61,4 +65,64 @@ model Request {
   status     RequestStatus
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
+}
+
+enum ConversationType {
+  individual
+  group
+}
+
+model Conversation {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  type        ConversationType
+  creatorID   String?          @db.ObjectId
+  creator     User?            @relation("creator", fields: [creatorID], references: [id])
+  Participant Participant[]    @relation("conversation")
+  Message     Message[]        @relation("conversation")
+  Nicknames   Nicknames[]      @relation("conversation-nickname")
+}
+
+model Participant {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  conversationID String       @db.ObjectId
+  conversation   Conversation @relation("conversation", fields: [conversationID], references: [id])
+  userID         String       @db.ObjectId
+  user           User         @relation("participant", fields: [userID], references: [id])
+}
+
+model Message {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  body           String
+  attachment     String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  conversationID String          @db.ObjectId
+  conversation   Conversation    @relation("conversation", fields: [conversationID], references: [id])
+  ownerID        String          @db.ObjectId
+  owner          User            @relation("owner", fields: [ownerID], references: [id])
+  MessageStatus  MessageStatus[] @relation("message")
+}
+
+enum MessageStatusType {
+  sent
+  received
+  seen
+}
+
+model MessageStatus {
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  messageID String            @db.ObjectId
+  message   Message           @relation("message", fields: [messageID], references: [id])
+  type      MessageStatusType
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model Nicknames {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  userID         String       @db.ObjectId
+  user           User         @relation("user-nickname", fields: [userID], references: [id])
+  conversationID String       @db.ObjectId
+  conversation   Conversation @relation("conversation-nickname", fields: [conversationID], references: [id])
 }
