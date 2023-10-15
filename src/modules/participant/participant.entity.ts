@@ -14,12 +14,4 @@ export class ParticipantEntity implements Participant {
   @ApiProperty()
   @Expose()
   userID: string;
-
-  @ApiProperty()
-  @Expose()
-  createdAt: Date;
-
-  @ApiProperty()
-  @Expose()
-  updatedAt: Date;
 }

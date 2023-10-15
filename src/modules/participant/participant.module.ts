@@ -4,6 +4,7 @@ import { ParticipantController } from "./participant.controller";
 import { ParticipantService } from "./participant.service";
 
 @Module({
+  exports: [ParticipantService],
   controllers: [ParticipantController],
   providers: [ParticipantService, PrismaService],
 })
