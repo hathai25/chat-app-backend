@@ -17,5 +17,9 @@ export class ConversationEntity implements Conversation {
 
   @ApiProperty()
   @Expose()
+  image: string;
+
+  @ApiProperty()
+  @Expose()
   creatorID: string;
 }

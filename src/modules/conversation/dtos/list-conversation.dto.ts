@@ -22,11 +22,12 @@ export class ListConversationDto {
   creatorID: string;
 
   @ApiProperty()
-  Participant: {
+  @Expose()
+  participants: {
     user: {
       id: string;
       username: string;
       avatar: string;
     };
-  };
+  }[];
 }

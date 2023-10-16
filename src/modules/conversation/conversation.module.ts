@@ -8,5 +8,6 @@ import { ParticipantModule } from "../participant/participant.module";
   imports: [ParticipantModule],
   controllers: [ConversationController],
   providers: [ConversationService, PrismaService],
+  exports: [ConversationService],
 })
 export class ConversationModule {}

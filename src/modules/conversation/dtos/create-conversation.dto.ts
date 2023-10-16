@@ -8,7 +8,7 @@ export class CreateConversationDto {
   @ApiProperty({ required: false })
   @IsString()
   @Expose()
-  name: string;
+  name?: string;
 
   @IsEnum(ConversationType)
   @ApiProperty()
@@ -19,7 +19,13 @@ export class CreateConversationDto {
   @ApiProperty({ required: false })
   @IsString()
   @Expose()
-  creatorID: string;
+  image?: string;
+
+  @IsOptional()
+  @ApiProperty({ required: false })
+  @IsString()
+  @Expose()
+  creatorID?: string;
 
   @ApiProperty()
   @IsArray()

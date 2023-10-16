@@ -22,7 +22,7 @@ model User {
   username            String
   password            String
   name                String
-  avatar              String?
+  avatar              String?        @default("https://i.imgur.com/HeIi0wU.png")
   dob                 DateTime?
   gender              Gender?
   UserRelationship    Relationship[] @relation("user")
@@ -76,6 +76,7 @@ model Conversation {
   id          String           @id @default(auto()) @map("_id") @db.ObjectId
   name        String?
   type        ConversationType
+  image       String?          @default("https://i.imgur.com/HeIi0wU.png")
   creatorID   String?          @db.ObjectId
   creator     User?            @relation("creator", fields: [creatorID], references: [id])
   Participant Participant[]    @relation("conversation")

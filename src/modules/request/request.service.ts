@@ -3,12 +3,14 @@ import { PrismaService } from "src/prisma.service";
 import { CreateRequestDto, PendingRequestDto, SentRequestDto } from "./dtos";
 import { RelationshipService } from "../relationship/relationship.service";
 import { RequestEntity } from "./request.entity";
+import { ConversationService } from "../conversation/conversation.service";
 
 @Injectable()
 export class RequestService {
   constructor(
     private prisma: PrismaService,
-    private relationshipService: RelationshipService
+    private relationshipService: RelationshipService,
+    private conversationService: ConversationService
   ) {}
 
   async createRequest(data: CreateRequestDto): Promise<RequestEntity> {
@@ -73,6 +75,12 @@ export class RequestService {
       where: { id: requestID },
       data: { status: "accepted" },
     });
+
+    await this.conversationService.createConversation({
+      type: "individual",
+      participantIDs: [data.senderID, data.receiverID],
+    });
+
     return this.relationshipService.create({
       userID: data.senderID,
       friendID: data.receiverID,

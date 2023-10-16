@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
-import { CreateConversationDto } from "./dtos";
+import { CreateConversationDto, ListConversationDto } from "./dtos";
 import { ParticipantService } from "../participant/participant.service";
 
 @Injectable()
@@ -31,7 +31,7 @@ export class ConversationService {
     return conversation.id;
   }
 
-  async listConversation(userID: string) {
+  async listConversation(userID: string): Promise<ListConversationDto[]> {
     const conversations = await this.prisma.conversation.findMany({
       where: {
         Participant: {
@@ -59,10 +59,23 @@ export class ConversationService {
       },
     });
 
-    return conversations;
+    const results = conversations.map((conversation) => ({
+      id: conversation.id,
+      name: conversation.name,
+      type: conversation.type,
+      creatorID: conversation.creatorID,
+      participants: conversation.Participant.map((participant) => ({
+        user: {
+          id: participant.user.id,
+          username: participant.user.username,
+          avatar: participant.user.avatar,
+        },
+      })),
+    }));
+    return results;
   }
 
-  async getConversation(id: string) {
+  async getConversation(id: string): Promise<ListConversationDto> {
     const conversation = await this.prisma.conversation.findUnique({
       where: {
         id: id,
@@ -86,6 +99,56 @@ export class ConversationService {
       },
     });
 
-    return conversation;
+    const results = {
+      id: conversation.id,
+      name: conversation.name,
+      type: conversation.type,
+      creatorID: conversation.creatorID,
+      participants: conversation.Participant.map((participant) => ({
+        user: {
+          id: participant.user.id,
+          username: participant.user.username,
+          avatar: participant.user.avatar,
+        },
+      })),
+    };
+    return results;
+  }
+
+  async getIndividualConversation(userID: string, friendID: string) {
+    const conversation = await this.prisma.conversation.findFirst({
+      where: {
+        type: "individual",
+        Participant: {
+          every: {
+            OR: [
+              {
+                userID: userID,
+              },
+              {
+                userID: friendID,
+              },
+            ],
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        creatorID: true,
+        Participant: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 }
