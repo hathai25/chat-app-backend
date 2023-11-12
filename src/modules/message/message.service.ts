@@ -2,10 +2,30 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 import { CreateMessageDto, MessageDto } from "./dtos";
 import { MessageEntity } from "./message.entity";
+import { Socket } from "socket.io";
+import { WsException } from "@nestjs/websockets";
 
 @Injectable()
 export class MessageService {
   constructor(private prisma: PrismaService) {}
+  async getUserFromSocket(socket: Socket) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: socket.handshake.query.userID.toString(),
+      },
+      select: {
+        id: true,
+        username: true,
+        avatar: true,
+      },
+    });
+
+    if (!user) {
+      throw new WsException("Invalid Credentials");
+    }
+
+    return user;
+  }
 
   async getMessages(conversationID: string): Promise<MessageDto[]> {
     const messages = await this.prisma.message.findMany({

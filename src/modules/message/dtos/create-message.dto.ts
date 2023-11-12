@@ -19,9 +19,4 @@ export class CreateMessageDto {
   @ApiProperty()
   @Expose()
   ownerID: string;
-
-  @IsOptional()
-  @ApiProperty({ required: false })
-  @Expose()
-  createdAt: Date;
 }
