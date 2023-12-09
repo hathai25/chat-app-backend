@@ -56,6 +56,13 @@ export class ConversationService {
             },
           },
         },
+        Nicknames: {
+          select: {
+            id: true,
+            nickname: true,
+            userID: true,
+          },
+        },
       },
     });
 
@@ -68,6 +75,9 @@ export class ConversationService {
         user: {
           id: participant.user.id,
           username: participant.user.username,
+          nickname: conversation.Nicknames.find(
+            (nickname) => nickname.userID === participant.user.id
+          )?.nickname,
           avatar: participant.user.avatar,
         },
       })),
@@ -96,6 +106,13 @@ export class ConversationService {
             },
           },
         },
+        Nicknames: {
+          select: {
+            id: true,
+            nickname: true,
+            userID: true,
+          },
+        },
       },
     });
 
@@ -108,6 +125,9 @@ export class ConversationService {
         user: {
           id: participant.user.id,
           username: participant.user.username,
+          nickname: conversation.Nicknames.find(
+            (nickname) => nickname.userID === participant.user.id
+          )?.nickname,
           avatar: participant.user.avatar,
         },
       })),

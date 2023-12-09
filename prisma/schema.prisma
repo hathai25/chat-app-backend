@@ -122,6 +122,7 @@ model MessageStatus {
 
 model Nickname {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  nickname       String
   userID         String       @db.ObjectId
   user           User         @relation("user-nickname", fields: [userID], references: [id])
   conversationID String       @db.ObjectId

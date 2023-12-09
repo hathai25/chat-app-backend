@@ -9,6 +9,10 @@ export class NicknameEntity implements Nickname {
 
   @ApiProperty()
   @Expose()
+  nickname: string;
+
+  @ApiProperty()
+  @Expose()
   userID: string;
 
   @ApiProperty()

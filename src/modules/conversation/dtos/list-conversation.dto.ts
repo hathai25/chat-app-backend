@@ -27,6 +27,7 @@ export class ListConversationDto {
     user: {
       id: string;
       username: string;
+      nickname: string;
       avatar: string;
     };
   }[];
